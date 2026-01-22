@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="d4519818646d43d4908f356ffd710415" Name="Diagram1" ZoomLevel="73">
+        <EntityTypeShape EntityType="ZeroHungerDBModel.CollectionActivity" Width="1.5" PointX="5.25" PointY="3.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="ZeroHungerDBModel.CollectRequest" Width="1.5" PointX="5.25" PointY="7" IsExpanded="true" />
+        <EntityTypeShape EntityType="ZeroHungerDBModel.DistributionActivity" Width="1.5" PointX="7.5" PointY="5.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="ZeroHungerDBModel.Employee" Width="1.5" PointX="3" PointY="3.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="ZeroHungerDBModel.Restaurant" Width="1.5" PointX="3" PointY="7" IsExpanded="true" />
+        <EntityTypeShape EntityType="ZeroHungerDBModel.User" Width="1.5" PointX="0.75" PointY="5.25" IsExpanded="true" />
+        <AssociationConnector Association="ZeroHungerDBModel.FK__Collectio__Colle__5070F446" ManuallyRouted="false" />
+        <AssociationConnector Association="ZeroHungerDBModel.FK__Collectio__Emplo__5165187F" ManuallyRouted="false" />
+        <AssociationConnector Association="ZeroHungerDBModel.FK__CollectRe__Assig__4BAC3F29" ManuallyRouted="false" />
+        <AssociationConnector Association="ZeroHungerDBModel.FK__CollectRe__Resta__4AB81AF0" ManuallyRouted="false" />
+        <AssociationConnector Association="ZeroHungerDBModel.FK__Distribut__Colle__5629CD9C" ManuallyRouted="false" />
+        <AssociationConnector Association="ZeroHungerDBModel.FK__Distribut__Emplo__571DF1D5" ManuallyRouted="false" />
+        <AssociationConnector Association="ZeroHungerDBModel.FK__Employees__UserI__45F365D3" ManuallyRouted="false" />
+        <AssociationConnector Association="ZeroHungerDBModel.FK__Restauran__UserI__3F466844" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>
