@@ -1,0 +1,231 @@
+﻿@{
+    ViewBag.Title = "Assign Employee";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var request = ViewBag.Request as ZeroHunger_Food_Distribution.Models.CollectRequest;
+    var employees = ViewBag.Employees as List<ZeroHunger_Food_Distribution.Models.Employee>;
+}
+
+<style>
+    .assign-container {
+        max-width: 800px;
+        margin: 40px auto;
+    }
+
+    .page-header {
+        background: linear-gradient(135deg, #2d6a4f 0%, #1b4332 100%);
+        color: white;
+        padding: 30px;
+        border-radius: 8px;
+        margin-bottom: 30px;
+    }
+
+        .page-header h2 {
+            margin: 0 0 10px 0;
+            font-weight: 500;
+        }
+
+    .request-info-card {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        padding: 30px;
+        margin-bottom: 30px;
+    }
+
+        .request-info-card h4 {
+            color: #2d6a4f;
+            margin-top: 0;
+            border-bottom: 2px solid #2d6a4f;
+            padding-bottom: 10px;
+        }
+
+    .info-row {
+        padding: 10px 0;
+        border-bottom: 1px solid #eee;
+    }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+    .info-label {
+        font-weight: 600;
+        color: #666;
+        width: 150px;
+        display: inline-block;
+    }
+
+    .employee-selection-card {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        padding: 30px;
+    }
+
+        .employee-selection-card h4 {
+            color: #2d6a4f;
+            margin-top: 0;
+            border-bottom: 2px solid #2d6a4f;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+    .employee-card {
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 15px;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+        .employee-card:hover {
+            border-color: #2d6a4f;
+            background: #f8f9fa;
+        }
+
+        .employee-card input[type="radio"] {
+            margin-right: 15px;
+            transform: scale(1.3);
+        }
+
+        .employee-card label {
+            cursor: pointer;
+            margin: 0;
+            font-weight: 500;
+            font-size: 16px;
+        }
+
+    .employee-details {
+        margin-left: 35px;
+        margin-top: 10px;
+        color: #666;
+        font-size: 14px;
+    }
+
+    .btn-assign-submit {
+        background-color: #2d6a4f;
+        color: white;
+        padding: 12px 40px;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+        .btn-assign-submit:hover {
+            background-color: #1b4332;
+        }
+
+    .btn-cancel {
+        background-color: #6c757d;
+        color: white;
+        padding: 12px 40px;
+        border-radius: 8px;
+        text-decoration: none;
+        display: inline-block;
+        margin-left: 10px;
+    }
+
+        .btn-cancel:hover {
+            background-color: #5a6268;
+            color: white;
+            text-decoration: none;
+        }
+</style>
+
+<div class="assign-container">
+    <div class="page-header">
+        <h2>Assign Employee to Request #@ViewBag.RequestId</h2>
+        <p style="margin: 0; opacity: 0.9;">Select an employee to handle this collection request</p>
+    </div>
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">
+            <span data-dismiss="alert"></span>
+            @TempData["ErrorMessage"]
+        </div>
+    }
+
+    @if (request != null)
+    {
+        <div class="request-info-card">
+            <h4>Request Details</h4>
+            <div class="info-row">
+                <span class="info-label">Restaurant:</span>
+                @if (request.Restaurant != null)
+                {
+                    <span>@request.Restaurant.RestaurantName</span>
+                }
+            </div>
+            <div class="info-row">
+                <span class="info-label">Food:</span>
+                <span>@request.FoodDescription</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Quantity:</span>
+                <span>@request.ApproximateQuantity</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Preserve Until:</span>
+                <span>@request.PreservationTime.ToString("MMMM dd, yyyy hh:mm tt")</span>
+            </div>
+        </div>
+    }
+
+    <div class="employee-selection-card">
+        <h4>Select Employee</h4>
+
+        @if (employees != null && employees.Count > 0)
+        {
+            using (Html.BeginForm("AssignEmployee", "Admin", FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="requestId" value="@ViewBag.RequestId" />
+
+                foreach (var employee in employees)
+                {
+                    <div class="employee-card">
+                        <input type="radio"
+                               name="employeeId"
+                               value="@employee.EmployeeId"
+                               id="emp_@employee.EmployeeId"
+                               required />
+                        <label for="emp_@employee.EmployeeId">
+                            @if (employee.User != null)
+                            {
+                                <text>@employee.User.FullName</text>
+                            }
+                            else
+                            {
+                                <text>Employee #@employee.EmployeeId</text>
+                            }
+                        </label>
+                        <div class="employee-details">
+                            <div>Employee Code: @employee.EmployeeCode</div>
+                            @if (employee.User != null)
+                            {
+                                <div>Email: @employee.User.Email</div>
+                                <div>Phone: @employee.User.Phone</div>
+                            }
+                            <div>Joined: @employee.JoiningDate.ToString("MMM dd, yyyy")</div>
+                        </div>
+                    </div>
+                }
+
+                <div style="margin-top: 30px; text-align: center;">
+                    <button type="submit" class="btn-assign-submit">
+                        Assign Employee
+                    </button>
+                    @Html.ActionLink("Cancel", "AllRequests", "Admin", null, new { @class = "btn-cancel" })
+                </div>
+            }
+        }
+        else
+        {
+            <p class="text-muted">No active employees available.</p>
+            @Html.ActionLink("← Back to Requests", "AllRequests", "Admin", null, new { @class = "btn-cancel" })
+        }
+    </div>
+</div>

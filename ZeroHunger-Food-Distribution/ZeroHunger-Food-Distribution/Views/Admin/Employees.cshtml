@@ -1,0 +1,280 @@
+﻿@model List<ZeroHunger_Food_Distribution.Models.Employee>
+
+@{
+    ViewBag.Title = "Employees";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var assignmentCounts = ViewBag.AssignmentCounts as Dictionary<int, int>;
+}
+
+<style>
+    .page-header {
+        background: linear-gradient(135deg, #2d6a4f 0%, #1b4332 100%);
+        color: white;
+        padding: 30px;
+        border-radius: 8px;
+        margin-bottom: 30px;
+    }
+
+        .page-header h2 {
+            margin: 0;
+            font-weight: 500;
+        }
+
+    .employees-stats {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        padding: 20px;
+        margin-bottom: 30px;
+        display: flex;
+        justify-content: space-around;
+    }
+
+    .stat-item {
+        text-align: center;
+    }
+
+    .stat-number {
+        font-size: 36px;
+        font-weight: bold;
+        color: #2d6a4f;
+    }
+
+    .stat-label {
+        font-size: 14px;
+        color: #666;
+        text-transform: uppercase;
+    }
+
+    .employees-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 20px;
+    }
+
+    .employee-card {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        padding: 25px;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+        .employee-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        }
+
+    .employee-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: start;
+        margin-bottom: 15px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid #f0f0f0;
+    }
+
+    .employee-name {
+        font-size: 20px;
+        font-weight: 600;
+        color: #2d6a4f;
+        margin: 0;
+    }
+
+    .employee-code {
+        font-size: 14px;
+        color: #666;
+        margin-top: 5px;
+    }
+
+    .status-badge {
+        padding: 6px 16px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 500;
+    }
+
+    .status-active {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .status-inactive {
+        background: #f8d7da;
+        color: #721c24;
+    }
+
+    .employee-info {
+        margin: 10px 0;
+    }
+
+    .info-item {
+        display: flex;
+        align-items: center;
+        padding: 8px 0;
+        font-size: 14px;
+        color: #666;
+    }
+
+        .info-item i {
+            margin-right: 10px;
+            color: #2d6a4f;
+            width: 20px;
+        }
+
+    .employee-stats {
+        display: flex;
+        justify-content: space-around;
+        margin: 15px 0;
+        padding: 15px 0;
+        border-top: 1px solid #f0f0f0;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .stat-box {
+        text-align: center;
+    }
+
+    .stat-box-number {
+        font-size: 24px;
+        font-weight: bold;
+        color: #2d6a4f;
+    }
+
+    .stat-box-label {
+        font-size: 12px;
+        color: #666;
+    }
+
+    .btn-view-details {
+        background-color: #2d6a4f;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 6px;
+        text-decoration: none;
+        display: inline-block;
+        width: 100%;
+        text-align: center;
+        margin-top: 10px;
+    }
+
+        .btn-view-details:hover {
+            background-color: #1b4332;
+            color: white;
+            text-decoration: none;
+        }
+
+    .no-employees {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        padding: 60px;
+        text-align: center;
+        color: #666;
+    }
+</style>
+
+<div class="page-header">
+    <h2>Employee Management</h2>
+    <p style="margin: 5px 0 0 0; opacity: 0.9;">View and manage all employees</p>
+</div>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">
+        <span data-dismiss="alert"></span>
+        @TempData["SuccessMessage"]
+    </div>
+}
+
+@if (Model != null && Model.Count > 0)
+{
+    <div class="employees-stats">
+        <div class="stat-item">
+            <div class="stat-number">@Model.Count</div>
+            <div class="stat-label">Total Employees</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number">@Model.Count(e => e.IsActive)</div>
+            <div class="stat-label">Active</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number">@Model.Count(e => !e.IsActive)</div>
+            <div class="stat-label">Inactive</div>
+        </div>
+    </div>
+
+    <div class="employees-grid">
+        @foreach (var employee in Model)
+        {
+            <div class="employee-card">
+                <div class="employee-header">
+                    <div>
+                        <div class="employee-name">
+                            @if (employee.User != null)
+                            {
+                                <text>@employee.User.FullName</text>
+                            }
+                            else
+                            {
+                                <text>Employee #@employee.EmployeeId</text>
+                            }
+                        </div>
+                        <div class="employee-code">Code: @employee.EmployeeCode</div>
+                    </div>
+                    <span class="status-badge status-@(employee.IsActive ? "active" : "inactive")">
+                        @(employee.IsActive ? "Active" : "Inactive")
+                    </span>
+                </div>
+
+                <div class="employee-info">
+                    @if (employee.User != null)
+                    {
+                        <div class="info-item">
+                            <i class="glyphicon glyphicon-envelope"></i>
+                            @employee.User.Email
+                        </div>
+                        <div class="info-item">
+                            <i class="glyphicon glyphicon-phone"></i>
+                            @employee.User.Phone
+                        </div>
+                    }
+                    <div class="info-item">
+                        <i class="glyphicon glyphicon-home"></i>
+                        @(string.IsNullOrEmpty(employee.Address) ? "No address provided" : employee.Address)
+                    </div>
+                    <div class="info-item">
+                        <i class="glyphicon glyphicon-calendar"></i>
+                        Joined: @employee.JoiningDate.ToString("MMM dd, yyyy")
+                    </div>
+                </div>
+
+                <div class="employee-stats">
+                    <div class="stat-box">
+                        <div class="stat-box-number">
+                            @{
+                                int assignmentCount = 0;
+                                if (assignmentCounts != null && assignmentCounts.ContainsKey(employee.EmployeeId))
+                                {
+                                    assignmentCount = assignmentCounts[employee.EmployeeId];
+                                }
+                            }
+                            @assignmentCount
+                        </div>
+                        <div class="stat-box-label">Assignments</div>
+                    </div>
+                </div>
+
+                @Html.ActionLink("View Details", "EmployeeDetails", "Admin", new { id = employee.EmployeeId }, new { @class = "btn-view-details" })
+            </div>
+        }
+    </div>
+}
+else
+{
+    <div class="no-employees">
+        <div style="font-size: 64px; color: #ddd; margin-bottom: 20px;">👥</div>
+        <h4>No Employees Yet</h4>
+        <p>No employees have been added to the system.</p>
+    </div>
+}

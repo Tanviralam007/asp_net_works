@@ -1,0 +1,249 @@
+﻿@{
+    ViewBag.Title = "Admin Dashboard";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .dashboard-container {
+        margin-top: 30px;
+    }
+
+    .welcome-section {
+        background: linear-gradient(135deg, #2d6a4f 0%, #1b4332 100%);
+        color: white;
+        padding: 30px;
+        border-radius: 8px;
+        margin-bottom: 30px;
+    }
+
+        .welcome-section h2 {
+            margin: 0 0 10px 0;
+            font-weight: 500;
+        }
+
+    .stat-card {
+        background: white;
+        padding: 25px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        margin-bottom: 20px;
+        text-align: center;
+        transition: transform 0.2s;
+    }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+    .stat-number {
+        font-size: 48px;
+        font-weight: bold;
+        margin: 10px 0;
+    }
+
+    .stat-label {
+        font-size: 14px;
+        color: #666;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .stat-card.primary .stat-number {
+        color: #2d6a4f;
+    }
+
+    .stat-card.warning .stat-number {
+        color: #f39c12;
+    }
+
+    .stat-card.info .stat-number {
+        color: #3498db;
+    }
+
+    .stat-card.success .stat-number {
+        color: #27ae60;
+    }
+
+    .stat-card.danger .stat-number {
+        color: #e74c3c;
+    }
+
+    .recent-requests {
+        background: white;
+        padding: 25px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        margin-top: 30px;
+    }
+
+        .recent-requests h3 {
+            margin-top: 0;
+            color: #2d6a4f;
+            border-bottom: 2px solid #2d6a4f;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+    .request-item {
+        padding: 15px;
+        border-bottom: 1px solid #eee;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+        .request-item:last-child {
+            border-bottom: none;
+        }
+
+    .request-info {
+        flex: 1;
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 500;
+        margin-right: 10px;
+    }
+
+    .status-pending {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    .status-assigned {
+        background: #d1ecf1;
+        color: #0c5460;
+    }
+
+    .status-collected {
+        background: #cce5ff;
+        color: #004085;
+    }
+
+    .status-completed {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .quick-link {
+        display: inline-block;
+        padding: 12px 25px;
+        margin: 10px;
+        background: #2d6a4f;
+        color: white;
+        border-radius: 8px;
+        text-decoration: none;
+        transition: background 0.2s;
+    }
+
+        .quick-link:hover {
+            background: #1b4332;
+            color: white;
+            text-decoration: none;
+        }
+</style>
+
+<div class="dashboard-container">
+    <div class="welcome-section">
+        <h2>Admin Dashboard</h2>
+        <p>Monitor and manage the entire Zero Hunger system</p>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">
+            <span data-dismiss="alert"></span>
+            @TempData["SuccessMessage"]
+        </div>
+    }
+
+    <div class="row">
+        <div class="col-md-3">
+            <div class="stat-card primary">
+                <div class="stat-label">Total Requests</div>
+                <div class="stat-number">@ViewBag.TotalRequests</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card warning">
+                <div class="stat-label">Pending</div>
+                <div class="stat-number">@ViewBag.PendingRequests</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card info">
+                <div class="stat-label">Assigned</div>
+                <div class="stat-number">@ViewBag.AssignedRequests</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card success">
+                <div class="stat-label">Completed</div>
+                <div class="stat-number">@ViewBag.CompletedRequests</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row" style="margin-top: 20px;">
+        <div class="col-md-4">
+            <div class="stat-card danger">
+                <div class="stat-label">Active Restaurants</div>
+                <div class="stat-number">@ViewBag.TotalRestaurants</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stat-card info">
+                <div class="stat-label">Active Employees</div>
+                <div class="stat-number">@ViewBag.TotalEmployees</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stat-card warning">
+                <div class="stat-label">Active Requests</div>
+                <div class="stat-number">@ViewBag.ActiveRequests</div>
+            </div>
+        </div>
+    </div>
+
+    <div style="text-align: center; margin: 30px 0;">
+        @Html.ActionLink("View All Requests", "AllRequests", "Admin", null, new { @class = "quick-link" })
+        @Html.ActionLink("Manage Employees", "Employees", "Admin", null, new { @class = "quick-link" })
+    </div>
+
+    <div class="recent-requests">
+        <h3>Recent Requests (All Restaurants)</h3>
+        @if (ViewBag.RecentRequests != null && ((List<ZeroHunger_Food_Distribution.Models.CollectRequest>)ViewBag.RecentRequests).Count > 0)
+        {
+            foreach (var request in (List<ZeroHunger_Food_Distribution.Models.CollectRequest>)ViewBag.RecentRequests)
+            {
+                <div class="request-item">
+                    <div class="request-info">
+                        <strong>@request.FoodDescription</strong>
+                        @if (request.Restaurant != null)
+                        {
+                            <br />
+                            <small class="text-muted">
+                                Restaurant: @request.Restaurant.RestaurantName |
+                                Quantity: @request.ApproximateQuantity |
+                                Date: @request.RequestedDate.ToString("MMM dd, yyyy")
+                            </small>
+                        }
+                    </div>
+                    <div>
+                        <span class="status-badge status-@request.RequestStatus.ToLower()">
+                            @request.RequestStatus
+                        </span>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <p class="text-muted">No requests in the system yet.</p>
+        }
+    </div>
+</div>

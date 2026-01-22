@@ -1,0 +1,189 @@
+﻿@{
+    ViewBag.Title = "Restaurant Dashboard";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .dashboard-container {
+        margin-top: 30px;
+    }
+
+    .stat-card {
+        background: white;
+        padding: 25px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        margin-bottom: 20px;
+        text-align: center;
+    }
+
+    .stat-number {
+        font-size: 48px;
+        font-weight: bold;
+        margin: 10px 0;
+    }
+
+    .stat-label {
+        font-size: 16px;
+        color: #666;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .stat-card.primary .stat-number {
+        color: #2d6a4f;
+    }
+
+    .stat-card.warning .stat-number {
+        color: #f39c12;
+    }
+
+    .stat-card.info .stat-number {
+        color: #3498db;
+    }
+
+    .stat-card.success .stat-number {
+        color: #27ae60;
+    }
+
+    .welcome-section {
+        background: linear-gradient(135deg, #2d6a4f 0%, #1b4332 100%);
+        color: white;
+        padding: 30px;
+        border-radius: 8px;
+        margin-bottom: 30px;
+    }
+
+        .welcome-section h2 {
+            margin: 0 0 10px 0;
+            font-weight: 500;
+        }
+
+    .recent-requests {
+        background: white;
+        padding: 25px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        margin-top: 30px;
+    }
+
+        .recent-requests h3 {
+            margin-top: 0;
+            color: #2d6a4f;
+            border-bottom: 2px solid #2d6a4f;
+            padding-bottom: 10px;
+        }
+
+    .request-item {
+        padding: 15px;
+        border-bottom: 1px solid #eee;
+    }
+
+        .request-item:last-child {
+            border-bottom: none;
+        }
+
+    .status-badge {
+        display: inline-block;
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 500;
+    }
+
+    .status-pending {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    .status-assigned {
+        background: #d1ecf1;
+        color: #0c5460;
+    }
+
+    .status-completed {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .quick-action-btn {
+        background-color: #2d6a4f;
+        color: white;
+        padding: 15px 30px;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        text-decoration: none;
+        display: inline-block;
+        margin-top: 20px;
+    }
+
+        .quick-action-btn:hover {
+            background-color: #1b4332;
+            color: white;
+            text-decoration: none;
+        }
+</style>
+
+<div class="dashboard-container">
+    <div class="welcome-section">
+        <h2>Welcome back, @ViewBag.RestaurantName!</h2>
+        <p>Manage your food collection requests and help reduce waste</p>
+    </div>
+
+    <div class="row">
+        <div class="col-md-3">
+            <div class="stat-card primary">
+                <div class="stat-label">Total Requests</div>
+                <div class="stat-number">@ViewBag.TotalRequests</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card warning">
+                <div class="stat-label">Pending</div>
+                <div class="stat-number">@ViewBag.PendingRequests</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card info">
+                <div class="stat-label">Assigned</div>
+                <div class="stat-number">@ViewBag.AssignedRequests</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card success">
+                <div class="stat-label">Completed</div>
+                <div class="stat-number">@ViewBag.CompletedRequests</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center">
+        @Html.ActionLink("Create New Collection Request", "CreateRequest", "Restaurant", null, new { @class = "quick-action-btn" })
+    </div>
+
+    <div class="recent-requests">
+        <h3>Recent Requests</h3>
+        @if (ViewBag.RecentRequests != null && ((List<ZeroHunger_Food_Distribution.Models.CollectRequest>)ViewBag.RecentRequests).Count > 0)
+        {
+            foreach (var request in (List<ZeroHunger_Food_Distribution.Models.CollectRequest>)ViewBag.RecentRequests)
+            {
+                <div class="request-item">
+                    <strong>@request.FoodDescription</strong>
+                    <span class="pull-right">
+                        <span class="status-badge status-@request.RequestStatus.ToLower()">@request.RequestStatus</span>
+                    </span>
+                    <br />
+                    <small class="text-muted">
+                        Quantity: @request.ApproximateQuantity |
+                        Date: @request.RequestedDate.ToString("MMM dd, yyyy")
+                    </small>
+                </div>
+            }
+        }
+        else
+        {
+            <p class="text-muted">No requests yet. Create your first collection request to get started!</p>
+        }
+    </div>
+</div>

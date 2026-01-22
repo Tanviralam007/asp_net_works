@@ -1,0 +1,182 @@
+﻿@model ZeroHunger_Food_Distribution.Models.CollectRequest
+
+@{
+    ViewBag.Title = "Request Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .details-container {
+        max-width: 800px;
+        margin: 40px auto;
+    }
+
+    .page-header {
+        background: linear-gradient(135deg, #2d6a4f 0%, #1b4332 100%);
+        color: white;
+        padding: 30px;
+        border-radius: 8px;
+        margin-bottom: 30px;
+    }
+
+        .page-header h2 {
+            margin: 0 0 10px 0;
+            font-weight: 500;
+        }
+
+    .details-card {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        padding: 40px;
+    }
+
+    .detail-row {
+        margin-bottom: 25px;
+        padding-bottom: 25px;
+        border-bottom: 1px solid #eee;
+    }
+
+        .detail-row:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+    .detail-label {
+        font-weight: 600;
+        color: #2d6a4f;
+        margin-bottom: 8px;
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .detail-value {
+        font-size: 16px;
+        color: #333;
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 8px 20px;
+        border-radius: 25px;
+        font-size: 14px;
+        font-weight: 500;
+    }
+
+    .status-pending {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    .status-assigned {
+        background: #d1ecf1;
+        color: #0c5460;
+    }
+
+    .status-collected {
+        background: #cce5ff;
+        color: #004085;
+    }
+
+    .status-completed {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .btn-back {
+        background-color: #6c757d;
+        color: white;
+        padding: 12px 30px;
+        border-radius: 8px;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+        .btn-back:hover {
+            background-color: #5a6268;
+            color: white;
+            text-decoration: none;
+        }
+</style>
+
+<div class="details-container">
+    <div class="page-header">
+        <h2>Request Details #@Model.CollectRequestId</h2>
+        <p style="margin: 0; opacity: 0.9;">View complete information about your collection request</p>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">
+            <span data-dismiss="alert"></span>
+            @TempData["SuccessMessage"]
+        </div>
+    }
+
+    <div class="details-card">
+        <div class="detail-row">
+            <div class="detail-label">Request ID</div>
+            <div class="detail-value"><strong>#@Model.CollectRequestId</strong></div>
+        </div>
+
+        <div class="detail-row">
+            <div class="detail-label">Food Description</div>
+            <div class="detail-value">@Model.FoodDescription</div>
+        </div>
+
+        <div class="detail-row">
+            <div class="detail-label">Approximate Quantity</div>
+            <div class="detail-value">@Model.ApproximateQuantity</div>
+        </div>
+
+        <div class="detail-row">
+            <div class="detail-label">Requested Date</div>
+            <div class="detail-value">@Model.RequestedDate.ToString("MMMM dd, yyyy hh:mm tt")</div>
+        </div>
+
+        <div class="detail-row">
+            <div class="detail-label">Preservation Time (Best Before)</div>
+            <div class="detail-value">@Model.PreservationTime.ToString("MMMM dd, yyyy hh:mm tt")</div>
+        </div>
+
+        <div class="detail-row">
+            <div class="detail-label">Status</div>
+            <div class="detail-value">
+                <span class="status-badge status-@Model.RequestStatus.ToLower()">
+                    @Model.RequestStatus
+                </span>
+            </div>
+        </div>
+
+        @if (!string.IsNullOrEmpty(Model.Remarks))
+        {
+            <div class="detail-row">
+                <div class="detail-label">Additional Remarks</div>
+                <div class="detail-value">@Model.Remarks</div>
+            </div>
+        }
+
+        @if (Model.AssignedEmployeeId.HasValue)
+        {
+            <div class="detail-row">
+                <div class="detail-label">Assigned Employee</div>
+                <div class="detail-value">
+                    @if (Model.Employee != null)
+                    {
+                        <text>@Model.Employee.User.FullName</text>
+                    }
+                    else
+                    {
+                        <text>Employee #@Model.AssignedEmployeeId</text>
+                    }
+                </div>
+            </div>
+        }
+
+        <div style="margin-top: 30px; text-align: center;">
+            @Html.ActionLink("← Back to My Requests", "MyRequests", "Restaurant", null, new { @class = "btn-back" })
+        </div>
+    </div>
+</div>

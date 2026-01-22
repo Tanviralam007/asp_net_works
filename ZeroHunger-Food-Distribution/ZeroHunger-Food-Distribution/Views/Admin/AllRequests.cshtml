@@ -1,0 +1,245 @@
+﻿@model List<ZeroHunger_Food_Distribution.Models.CollectRequest>
+
+@{
+    ViewBag.Title = "All Requests";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .page-header {
+        background: linear-gradient(135deg, #2d6a4f 0%, #1b4332 100%);
+        color: white;
+        padding: 30px;
+        border-radius: 8px;
+        margin-bottom: 30px;
+    }
+
+        .page-header h2 {
+            margin: 0;
+            font-weight: 500;
+        }
+
+    .requests-table {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        overflow: hidden;
+    }
+
+    .table {
+        margin-bottom: 0;
+    }
+
+        .table thead {
+            background-color: #2d6a4f;
+            color: white;
+        }
+
+            .table thead th {
+                border: none;
+                font-weight: 500;
+                padding: 15px;
+            }
+
+        .table tbody td {
+            padding: 15px;
+            vertical-align: middle;
+        }
+
+    .status-badge {
+        display: inline-block;
+        padding: 6px 16px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 500;
+    }
+
+    .status-pending {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    .status-assigned {
+        background: #d1ecf1;
+        color: #0c5460;
+    }
+
+    .status-collected {
+        background: #cce5ff;
+        color: #004085;
+    }
+
+    .status-completed {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .btn-assign {
+        background-color: #2d6a4f;
+        color: white;
+        padding: 6px 16px;
+        border-radius: 4px;
+        text-decoration: none;
+        font-size: 13px;
+        display: inline-block;
+        margin-right: 5px;
+    }
+
+        .btn-assign:hover {
+            background-color: #1b4332;
+            color: white;
+            text-decoration: none;
+        }
+
+    .btn-view {
+        background-color: #6c757d;
+        color: white;
+        padding: 6px 16px;
+        border-radius: 4px;
+        text-decoration: none;
+        font-size: 13px;
+        display: inline-block;
+    }
+
+        .btn-view:hover {
+            background-color: #5a6268;
+            color: white;
+            text-decoration: none;
+        }
+
+    .no-requests {
+        text-align: center;
+        padding: 60px 20px;
+        color: #666;
+    }
+</style>
+
+<div class="page-header">
+    <h2>All Collection Requests</h2>
+    <p style="margin: 5px 0 0 0; opacity: 0.9;">View and manage requests from all restaurants</p>
+</div>
+
+<!-- Search and Filter Form -->
+<div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 20px;">
+    @using (Html.BeginForm("AllRequests", "Admin", FormMethod.Get))
+    {
+        <div class="row">
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>Search by Request ID</label>
+                    <input type="text" name="searchId" class="form-control" placeholder="Enter ID (e.g., 1, 2)" value="@ViewBag.SearchId" />
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>Filter by Status</label>
+                    <select name="statusFilter" class="form-control">
+                        <option value="">All Statuses</option>
+                        <option value="Pending" @(ViewBag.StatusFilter == "Pending" ? "selected" : "")>Pending</option>
+                        <option value="Assigned" @(ViewBag.StatusFilter == "Assigned" ? "selected" : "")>Assigned</option>
+                        <option value="Collected" @(ViewBag.StatusFilter == "Collected" ? "selected" : "")>Collected</option>
+                        <option value="Completed" @(ViewBag.StatusFilter == "Completed" ? "selected" : "")>Completed</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>&nbsp;</label>
+                    <div style="display: flex; gap: 10px;">
+                        <button type="submit" class="btn btn-primary" style="background-color: #2d6a4f; border-color: #2d6a4f; flex: 1;">
+                            <span class="glyphicon glyphicon-search"></span> Search
+                        </button>
+                        <a href="@Url.Action("AllRequests", "Admin")" class="btn btn-default" style="flex: 1;">
+                            <span class="glyphicon glyphicon-remove"></span> Clear
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">
+        <span data-dismiss="alert"></span>
+        @TempData["SuccessMessage"]
+    </div>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        <span data-dismiss="alert"></span>
+        @TempData["ErrorMessage"]
+    </div>
+}
+
+@if (Model != null && Model.Count > 0)
+{
+    <div class="requests-table">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Restaurant</th>
+                    <th>Food Description</th>
+                    <th>Quantity</th>
+                    <th>Requested Date</th>
+                    <th>Preserve Until</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var request in Model)
+                {
+                    <tr>
+                        <td><strong>#@request.CollectRequestId</strong></td>
+                        <td>
+                            @if (request.Restaurant != null)
+                            {
+                                <text>@request.Restaurant.RestaurantName</text>
+                            }
+                            else
+                            {
+                                <text>-</text>
+                            }
+                        </td>
+                        <td>@request.FoodDescription</td>
+                        <td>@request.ApproximateQuantity</td>
+                        <td>@request.RequestedDate.ToString("MMM dd, yyyy")</td>
+                        <td>@request.PreservationTime.ToString("MMM dd hh:mm tt")</td>
+                        <td>
+                            <span class="status-badge status-@request.RequestStatus.ToLower()">
+                                @request.RequestStatus
+                            </span>
+                        </td>
+                        <td>
+                            @if (request.RequestStatus == "Pending")
+                            {
+                                @Html.ActionLink("Assign", "AssignEmployee", "Admin", new { id = request.CollectRequestId }, new { @class = "btn btn-assign btn-sm" })
+                            }
+                            @Html.ActionLink("View", "RequestDetails", "Admin", new { id = request.CollectRequestId }, new { @class = "btn btn-view btn-sm" })
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div style="margin-top: 20px; text-align: right;">
+        <p class="text-muted">Total: <strong>@Model.Count</strong> request(s)</p>
+    </div>
+}
+else
+{
+    <div class="requests-table">
+        <div class="no-requests">
+            <div style="font-size: 64px; color: #ddd; margin-bottom: 20px;">📋</div>
+            <h4>No Requests Yet</h4>
+            <p>No restaurants have created collection requests yet.</p>
+        </div>
+    </div>
+}

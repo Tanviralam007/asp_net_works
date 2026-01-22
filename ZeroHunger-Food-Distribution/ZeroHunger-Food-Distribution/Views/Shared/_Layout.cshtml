@@ -1,0 +1,171 @@
+﻿@*file: /Views/Shared/_Layout.cshtml*@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - Zero Hunger</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+
+        .navbar-custom {
+            background-color: #2d6a4f;
+            border: none;
+            border-bottom: 2px solid #1b4332;
+        }
+
+            .navbar-custom .navbar-brand {
+                font-weight: 500;
+                color: #fff !important;
+                font-size: 20px;
+            }
+
+            .navbar-custom .navbar-nav > li > a {
+                color: #d8f3dc;
+            }
+
+                .navbar-custom .navbar-nav > li > a:hover,
+                .navbar-custom .navbar-nav > li > a:focus {
+                    color: #fff;
+                    background-color: transparent;
+                }
+
+            .navbar-custom .navbar-nav > .active > a {
+                background-color: #1b4332;
+                color: #fff;
+            }
+
+            .navbar-custom .navbar-nav > li > a {
+                text-decoration: none;
+            }
+
+            .navbar-custom .navbar-nav > li {
+                display: inline-block;
+                float: none;
+            }
+
+        .navbar-right-inline {
+            display: inline-block;
+        }
+
+            .navbar-right-inline a {
+                display: inline-block;
+                padding: 15px;
+                color: #d8f3dc;
+                text-decoration: none;
+            }
+
+                .navbar-right-inline a:hover {
+                    color: #fff;
+                }
+
+            .navbar-right-inline span {
+                color: #d8f3dc;
+                padding: 0 5px;
+            }
+
+        .navbar-left-inline {
+            display: inline-block;
+            padding: 20px;
+        }
+
+            .navbar-left-inline a {
+                display: inline-block;
+                padding: 0 15px;
+                color: #d8f3dc;
+                text-decoration: none;
+            }
+
+                .navbar-left-inline a:hover {
+                    color: #fff;
+                }
+
+            .navbar-left-inline span {
+                color: #d8f3dc;
+                padding: 0 5px;
+            }
+
+        footer {
+            margin-top: 60px;
+            padding: 20px 0;
+            border-top: 1px solid #e0e0e0;
+            color: #666;
+            font-size: 14px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-custom navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                @Html.ActionLink("Zero Hunger", "Login", "Account", null, new { @class = "navbar-brand" })
+            </div>
+
+            <ul class="nav navbar-nav">
+                @if (Session["UserId"] != null && Session["UserRole"] != null)
+                {
+                    string role = Session["UserRole"].ToString();
+
+                    <li class="navbar-left-inline">
+                        @if (role == "Admin")
+                        {
+                            @Html.ActionLink("Dashboard", "Dashboard", "Admin")
+                            <span>|</span>
+                            @Html.ActionLink("Requests", "AllRequests", "Admin")
+                            <span>|</span>
+                            @Html.ActionLink("Employees", "Employees", "Admin")
+                        }
+                        else if (role == "Restaurant")
+                        {
+                            @Html.ActionLink("Dashboard", "Dashboard", "Restaurant")
+                            <span>|</span>
+                            @Html.ActionLink("Create Request", "CreateRequest", "Restaurant")
+                            <span>|</span>
+                            @Html.ActionLink("My Requests", "MyRequests", "Restaurant")
+                        }
+                        else if (role == "Employee")
+                        {
+                            @Html.ActionLink("Dashboard", "Dashboard", "Employee")
+                            <span>|</span>
+                            @Html.ActionLink("My Assignments", "MyAssignments", "Employee")
+                        }
+                    </li>
+                }
+            </ul>
+
+            <ul class="nav navbar-nav navbar-right">
+                @if (Session["UserId"] != null)
+                {
+                    <li><a>@Session["UserName"]</a></li>
+                    <li>@Html.ActionLink("Logout", "Logout", "Account")</li>
+                }
+                else
+                {
+                    <li class="navbar-right-inline">
+                        @Html.ActionLink("Login", "Login", "Account")
+                        <span>|</span>
+                        @Html.ActionLink("Register", "Register", "Account")
+                    </li>
+                }
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container body-content">
+        @RenderBody()
+
+        <footer>
+            <p>&copy; @DateTime.Now.Year Zero Hunger</p>
+        </footer>
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,187 @@
+﻿@model ZeroHunger_Food_Distribution.ViewModels.CollectionActivityViewModel
+
+@{
+    ViewBag.Title = "Record Collection Activity";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var assignment = ViewBag.Assignment as ZeroHunger_Food_Distribution.Models.CollectRequest;
+}
+
+<style>
+    .form-container {
+        min-height: calc(100vh - 150px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 0;
+    }
+
+    .form-box {
+        width: 100%;
+        max-width: 700px;
+        padding: 40px;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .form-title {
+        text-align: center;
+        margin-bottom: 10px;
+        color: #2d6a4f;
+        font-weight: 500;
+    }
+
+    .form-subtitle {
+        text-align: center;
+        color: #666;
+        margin-bottom: 30px;
+    }
+
+    .assignment-info {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 6px;
+        margin-bottom: 30px;
+        border-left: 4px solid #2d6a4f;
+    }
+
+        .assignment-info h4 {
+            margin-top: 0;
+            color: #2d6a4f;
+        }
+
+    .info-item {
+        padding: 8px 0;
+        color: #666;
+    }
+
+        .info-item strong {
+            color: #333;
+        }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+        .form-group label {
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+    .btn-submit {
+        background-color: #2d6a4f;
+        border-color: #2d6a4f;
+        color: white;
+        padding: 12px;
+        font-size: 16px;
+        width: 100%;
+    }
+
+        .btn-submit:hover {
+            background-color: #1b4332;
+            border-color: #1b4332;
+        }
+
+    .btn-cancel {
+        background-color: #6c757d;
+        border-color: #6c757d;
+        color: white;
+        padding: 12px;
+        font-size: 16px;
+        width: 100%;
+    }
+
+        .btn-cancel:hover {
+            background-color: #5a6268;
+            border-color: #545b62;
+            color: white;
+            text-decoration: none;
+        }
+
+    .help-text {
+        font-size: 13px;
+        color: #666;
+        margin-top: 5px;
+    }
+</style>
+
+<div class="form-container">
+    <div class="form-box">
+        <h2 class="form-title">Record Collection Activity</h2>
+        <p class="form-subtitle">Record details of your food collection</p>
+
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger">
+                @TempData["ErrorMessage"]
+            </div>
+        }
+
+        @if (assignment != null)
+        {
+            <div class="assignment-info">
+                <h4>Assignment Information</h4>
+                <div class="info-item">
+                    <strong>Request ID:</strong> #@assignment.CollectRequestId
+                </div>
+                <div class="info-item">
+                    <strong>Restaurant:</strong>
+                    @if (assignment.Restaurant != null)
+                    {
+                        <text>@assignment.Restaurant.RestaurantName</text>
+                    }
+                </div>
+                <div class="info-item">
+                    <strong>Food:</strong> @assignment.FoodDescription
+                </div>
+                <div class="info-item">
+                    <strong>Expected Quantity:</strong> @assignment.ApproximateQuantity
+                </div>
+            </div>
+        }
+
+        @using (Html.BeginForm("RecordCollection", "Employee", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(m => m.CollectRequestId)
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.CollectionTime)
+                @Html.TextBoxFor(m => m.CollectionTime, new { @class = "form-control", type = "datetime-local", Value = DateTime.Now.ToString("yyyy-MM-ddTHH:mm") })
+                @Html.ValidationMessageFor(m => m.CollectionTime, "", new { @class = "text-danger" })
+                <div class="help-text">When did you collect the food?</div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.ActualQuantity)
+                @Html.TextBoxFor(m => m.ActualQuantity, new { @class = "form-control", placeholder = "e.g., 28 plates, 15 kg" })
+                @Html.ValidationMessageFor(m => m.ActualQuantity, "", new { @class = "text-danger" })
+                <div class="help-text">The actual quantity you collected</div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.CollectionNotes)
+                @Html.TextAreaFor(m => m.CollectionNotes, new { @class = "form-control", rows = 5, placeholder = "Describe the food condition, packaging quality, any special observations..." })
+                @Html.ValidationMessageFor(m => m.CollectionNotes, "", new { @class = "text-danger" })
+                <div class="help-text">Note the food condition, packaging, and any important observations</div>
+            </div>
+
+            <div class="form-group">
+                <button type="submit" class="btn btn-submit">
+                    ✓ Record Collection & Update Status
+                </button>
+            </div>
+
+            <div class="form-group">
+                @Html.ActionLink("Cancel", "AssignmentDetails", "Employee", new { id = Model.CollectRequestId }, new { @class = "btn btn-cancel" })
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

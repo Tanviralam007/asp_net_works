@@ -1,0 +1,279 @@
+﻿@model ZeroHunger_Food_Distribution.Models.CollectRequest
+
+@{
+    ViewBag.Title = "Assignment Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .details-container {
+        max-width: 800px;
+        margin: 40px auto;
+    }
+
+    .page-header {
+        background: linear-gradient(135deg, #2d6a4f 0%, #1b4332 100%);
+        color: white;
+        padding: 30px;
+        border-radius: 8px;
+        margin-bottom: 30px;
+    }
+
+        .page-header h2 {
+            margin: 0 0 10px 0;
+            font-weight: 500;
+        }
+
+    .details-card {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        padding: 40px;
+        margin-bottom: 20px;
+    }
+
+    .section-title {
+        color: #2d6a4f;
+        font-size: 18px;
+        font-weight: 600;
+        margin: 25px 0 15px 0;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #2d6a4f;
+    }
+
+        .section-title:first-child {
+            margin-top: 0;
+        }
+
+    .detail-row {
+        display: flex;
+        padding: 12px 0;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+    .detail-label {
+        font-weight: 600;
+        color: #666;
+        width: 200px;
+        flex-shrink: 0;
+    }
+
+    .detail-value {
+        color: #333;
+        flex: 1;
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 8px 20px;
+        border-radius: 25px;
+        font-size: 14px;
+        font-weight: 500;
+    }
+
+    .status-assigned {
+        background: #d1ecf1;
+        color: #0c5460;
+    }
+
+    .status-collected {
+        background: #cce5ff;
+        color: #004085;
+    }
+
+    .status-completed {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .action-buttons {
+        margin-top: 30px;
+        text-align: center;
+        padding-top: 20px;
+        border-top: 2px solid #f0f0f0;
+    }
+
+        .action-buttons > * {
+            margin: 0 5px;
+        }
+
+    .btn-back {
+        background-color: #6c757d;
+        color: white;
+        padding: 12px 30px;
+        border-radius: 8px;
+        text-decoration: none;
+        display: inline-block;
+        margin-right: 10px;
+    }
+
+        .btn-back:hover {
+            background-color: #5a6268;
+            color: white;
+            text-decoration: none;
+        }
+
+    .btn-status {
+        background-color: #2d6a4f;
+        color: white;
+        padding: 12px 30px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 16px;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+        .btn-status:hover {
+            background-color: #1b4332;
+            color: white;
+            text-decoration: none;
+        }
+
+    .alert-info {
+        background: #d1ecf1;
+        border: 1px solid #bee5eb;
+        color: #0c5460;
+        padding: 15px;
+        border-radius: 6px;
+        margin: 20px 0;
+    }
+</style>
+
+<div class="details-container">
+    <div class="page-header">
+        <h2>Assignment Details #@Model.CollectRequestId</h2>
+        <p style="margin: 0; opacity: 0.9;">Complete information about your assignment</p>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["SuccessMessage"]
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">
+            @TempData["ErrorMessage"]
+        </div>
+    }
+
+     <div class="details-card">
+        <div class="section-title">Assignment Information</div>
+
+        <div class="detail-row">
+            <div class="detail-label">Request ID</div>
+            <div class="detail-value"><strong>#@Model.CollectRequestId</strong></div>
+        </div>
+
+        <div class="detail-row">
+            <div class="detail-label">Current Status</div>
+            <div class="detail-value">
+                <span class="status-badge status-@Model.RequestStatus.ToLower()">
+                    @Model.RequestStatus
+                </span>
+            </div>
+        </div>
+
+        <div class="detail-row">
+            <div class="detail-label">Requested Date</div>
+            <div class="detail-value">@Model.RequestedDate.ToString("MMMM dd, yyyy hh:mm tt")</div>
+        </div>
+
+        <div class="section-title">Restaurant Information</div>
+
+        <div class="detail-row">
+            <div class="detail-label">Restaurant Name</div>
+            <div class="detail-value">
+                @if (Model.Restaurant != null)
+                {
+                    <text>@Model.Restaurant.RestaurantName</text>
+                }
+            </div>
+        </div>
+
+        @if (Model.Restaurant != null && Model.Restaurant.User != null)
+        {
+            <div class="detail-row">
+                <div class="detail-label">Contact Email</div>
+                <div class="detail-value">@Model.Restaurant.User.Email</div>
+            </div>
+
+            <div class="detail-row">
+                <div class="detail-label">Contact Phone</div>
+                <div class="detail-value">@Model.Restaurant.User.Phone</div>
+            </div>
+
+            <div class="detail-row">
+                <div class="detail-label">Address</div>
+                <div class="detail-value">@Model.Restaurant.Address</div>
+            </div>
+        }
+
+        <div class="section-title">Food Details</div>
+
+        <div class="detail-row">
+            <div class="detail-label">Food Description</div>
+            <div class="detail-value">@Model.FoodDescription</div>
+        </div>
+
+        <div class="detail-row">
+            <div class="detail-label">Approximate Quantity</div>
+            <div class="detail-value">@Model.ApproximateQuantity</div>
+        </div>
+
+        <div class="detail-row">
+            <div class="detail-label">Preserve Until</div>
+            <div class="detail-value">@Model.PreservationTime.ToString("MMMM dd, yyyy hh:mm tt")</div>
+        </div>
+
+        @if (!string.IsNullOrEmpty(Model.Remarks))
+        {
+            <div class="detail-row">
+                <div class="detail-label">Special Instructions</div>
+                <div class="detail-value">@Model.Remarks</div>
+            </div>
+        }
+
+        @if (Model.RequestStatus == "Assigned" || Model.RequestStatus == "Collected")
+        {
+            <div class="alert-info">
+                <strong>📌 Action Required:</strong>
+                @if (Model.RequestStatus == "Assigned")
+                {
+                    <text>Please collect the food from the restaurant and record the collection activity.</text>
+                }
+                else if (Model.RequestStatus == "Collected")
+                {
+                    <text>Please distribute the food to beneficiaries and record the distribution activity.</text>
+                }
+            </div>
+         }
+
+        <div class="action-buttons">
+            @Html.ActionLink("← Back to My Assignments", "MyAssignments", "Employee", null, new { @class = "btn-back" })
+
+            @if (Model.RequestStatus == "Assigned")
+            {
+                @Html.ActionLink("📝 Record Collection Activity", "RecordCollection", "Employee", new { id = Model.CollectRequestId }, new { @class = "btn-status", style = "display:inline-block; text-decoration:none;" })
+            }
+            else if (Model.RequestStatus == "Collected")
+            {
+                @Html.ActionLink("🎁 Record Distribution Activity", "RecordDistribution", "Employee", new { id = Model.CollectRequestId }, new { @class = "btn-status", style = "display:inline-block; text-decoration:none;" })
+            }
+            else if (Model.RequestStatus == "Completed")
+            {
+                <span style="color: #27ae60; font-weight: 600;">
+                    ✓ This assignment is completed
+                </span>
+            }
+        </div>
+    </div>
+</div>

@@ -1,0 +1,212 @@
+﻿@{
+    ViewBag.Title = "Employee Dashboard";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .dashboard-container {
+        margin-top: 30px;
+    }
+
+    .welcome-section {
+        background: linear-gradient(135deg, #2d6a4f 0%, #1b4332 100%);
+        color: white;
+        padding: 30px;
+        border-radius: 8px;
+        margin-bottom: 30px;
+    }
+
+        .welcome-section h2 {
+            margin: 0 0 10px 0;
+            font-weight: 500;
+        }
+
+    .stat-card {
+        background: white;
+        padding: 25px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        margin-bottom: 20px;
+        text-align: center;
+        transition: transform 0.2s;
+    }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+    .stat-number {
+        font-size: 48px;
+        font-weight: bold;
+        margin: 10px 0;
+    }
+
+    .stat-label {
+        font-size: 14px;
+        color: #666;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .stat-card.primary .stat-number {
+        color: #2d6a4f;
+    }
+
+    .stat-card.warning .stat-number {
+        color: #f39c12;
+    }
+
+    .stat-card.info .stat-number {
+        color: #3498db;
+    }
+
+    .stat-card.success .stat-number {
+        color: #27ae60;
+    }
+
+    .assignments-section {
+        background: white;
+        padding: 25px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        margin-top: 30px;
+    }
+
+        .assignments-section h3 {
+            margin-top: 0;
+            color: #2d6a4f;
+            border-bottom: 2px solid #2d6a4f;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+    .assignment-item {
+        padding: 15px;
+        border-bottom: 1px solid #eee;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+        .assignment-item:last-child {
+            border-bottom: none;
+        }
+
+    .status-badge {
+        display: inline-block;
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 500;
+    }
+
+    .status-assigned {
+        background: #d1ecf1;
+        color: #0c5460;
+    }
+
+    .status-collected {
+        background: #cce5ff;
+        color: #004085;
+    }
+
+    .status-completed {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .quick-link {
+        display: inline-block;
+        padding: 12px 25px;
+        margin: 10px;
+        background: #2d6a4f;
+        color: white;
+        border-radius: 8px;
+        text-decoration: none;
+        transition: background 0.2s;
+    }
+
+        .quick-link:hover {
+            background: #1b4332;
+            color: white;
+            text-decoration: none;
+        }
+</style>
+
+<div class="dashboard-container">
+    <div class="welcome-section">
+        <h2>Welcome back, @ViewBag.EmployeeName!</h2>
+        <p>View and manage your collection assignments</p>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["SuccessMessage"]
+        </div>
+    }
+
+    <div class="row">
+        <div class="col-md-3">
+            <div class="stat-card primary">
+                <div class="stat-label">Total Assignments</div>
+                <div class="stat-number">@ViewBag.TotalAssignments</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card warning">
+                <div class="stat-label">Pending</div>
+                <div class="stat-number">@ViewBag.PendingAssignments</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card info">
+                <div class="stat-label">Collected</div>
+                <div class="stat-number">@ViewBag.CollectedAssignments</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card success">
+                <div class="stat-label">Completed</div>
+                <div class="stat-number">@ViewBag.CompletedAssignments</div>
+            </div>
+        </div>
+    </div>
+
+    <div style="text-align: center; margin: 30px 0;">
+        @Html.ActionLink("View All My Assignments", "MyAssignments", "Employee", null, new { @class = "quick-link" })
+    </div>
+
+    <div class="assignments-section">
+        <h3>Recent Assignments</h3>
+        @if (ViewBag.MyAssignments != null && ((List<ZeroHunger_Food_Distribution.Models.CollectRequest>)ViewBag.MyAssignments).Count > 0)
+        {
+            foreach (var assignment in (List<ZeroHunger_Food_Distribution.Models.CollectRequest>)ViewBag.MyAssignments)
+            {
+                <div class="assignment-item">
+                    <div class="assignment-info">
+                        <strong>@assignment.FoodDescription</strong>
+                        @if (assignment.Restaurant != null)
+                        {
+                            <br />
+                            <small class="text-muted">
+                                Restaurant: @assignment.Restaurant.RestaurantName |
+                                Quantity: @assignment.ApproximateQuantity |
+                                Date: @assignment.RequestedDate.ToString("MMM dd, yyyy")
+                            </small>
+                        }
+                    </div>
+                    <div>
+                        <span class="status-badge status-@assignment.RequestStatus.ToLower()">
+                            @assignment.RequestStatus
+                        </span>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <p class="text-muted">No assignments yet.</p>
+        }
+    </div>
+</div>

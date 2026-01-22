@@ -1,0 +1,238 @@
+﻿@model List<ZeroHunger_Food_Distribution.Models.CollectRequest>
+
+@{
+    ViewBag.Title = "My Assignments";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .page-header {
+        background: linear-gradient(135deg, #2d6a4f 0%, #1b4332 100%);
+        color: white;
+        padding: 30px;
+        border-radius: 8px;
+        margin-bottom: 30px;
+    }
+
+        .page-header h2 {
+            margin: 0;
+            font-weight: 500;
+        }
+
+    .assignments-table {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        overflow: hidden;
+    }
+
+    .table {
+        margin-bottom: 0;
+    }
+
+        .table thead {
+            background-color: #2d6a4f;
+            color: white;
+        }
+
+            .table thead th {
+                border: none;
+                font-weight: 500;
+                padding: 15px;
+            }
+
+        .table tbody td {
+            padding: 15px;
+            vertical-align: middle;
+        }
+
+    .status-badge {
+        display: inline-block;
+        padding: 6px 16px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 500;
+    }
+
+    .status-assigned {
+        background: #d1ecf1;
+        color: #0c5460;
+    }
+
+    .status-collected {
+        background: #cce5ff;
+        color: #004085;
+    }
+
+    .status-completed {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .btn-view {
+        background-color: #6c757d;
+        color: white;
+        padding: 6px 16px;
+        border-radius: 4px;
+        text-decoration: none;
+        font-size: 13px;
+        display: inline-block;
+        margin-right: 5px;
+    }
+
+        .btn-view:hover {
+            background-color: #5a6268;
+            color: white;
+            text-decoration: none;
+        }
+
+    .btn-update {
+        background-color: #2d6a4f;
+        color: white;
+        padding: 6px 16px;
+        border-radius: 4px;
+        text-decoration: none;
+        font-size: 13px;
+        display: inline-block;
+    }
+
+        .btn-update:hover {
+            background-color: #1b4332;
+            color: white;
+            text-decoration: none;
+        }
+
+    .no-assignments {
+        text-align: center;
+        padding: 60px 20px;
+        color: #666;
+    }
+</style>
+
+<div class="page-header">
+    <h2>My Assignments</h2>
+    <p style="margin: 5px 0 0 0; opacity: 0.9;">View and manage all your collection assignments</p>
+</div>
+
+<!-- Search and Filter Form -->
+<div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 20px;">
+    @using (Html.BeginForm("MyAssignments", "Employee", FormMethod.Get))
+    {
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label>Search by Request ID</label>
+                    <input type="text" name="searchId" class="form-control" placeholder="Enter ID (e.g., 1, 2)" value="@ViewBag.SearchId" />
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>Filter by Status</label>
+                    <select name="statusFilter" class="form-control">
+                        <option value="">All Statuses</option>
+                        <option value="Assigned" @(ViewBag.StatusFilter == "Assigned" ? "selected" : "")>Assigned</option>
+                        <option value="Collected" @(ViewBag.StatusFilter == "Collected" ? "selected" : "")>Collected</option>
+                        <option value="Completed" @(ViewBag.StatusFilter == "Completed" ? "selected" : "")>Completed</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-5">
+                <div class="form-group">
+                    <label>&nbsp;</label>
+                    <div style="display: flex; gap: 10px;">
+                        <button type="submit" class="btn btn-primary" style="background-color: #2d6a4f; border-color: #2d6a4f; flex: 1;">
+                            <span class="glyphicon glyphicon-search"></span> Search
+                        </button>
+                        <a href="@Url.Action("MyAssignments", "Employee")" class="btn btn-default" style="flex: 1;">
+                            <span class="glyphicon glyphicon-remove"></span> Clear
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SuccessMessage"]
+    </div>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["ErrorMessage"]
+    </div>
+}
+
+@if (Model != null && Model.Count > 0)
+{
+    <div class="assignments-table">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Restaurant</th>
+                    <th>Food Description</th>
+                    <th>Quantity</th>
+                    <th>Requested Date</th>
+                    <th>Preserve Until</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var assignment in Model)
+                {
+                    <tr>
+                        <td><strong>#@assignment.CollectRequestId</strong></td>
+                        <td>
+                            @if (assignment.Restaurant != null)
+                            {
+                                <text>@assignment.Restaurant.RestaurantName</text>
+                            }
+                            else
+                            {
+                                <text>-</text>
+                            }
+                        </td>
+                        <td>@assignment.FoodDescription</td>
+                        <td>@assignment.ApproximateQuantity</td>
+                        <td>@assignment.RequestedDate.ToString("MMM dd, yyyy")</td>
+                        <td>@assignment.PreservationTime.ToString("MMM dd hh:mm tt")</td>
+                        <td>
+                            <span class="status-badge status-@assignment.RequestStatus.ToLower()">
+                                @assignment.RequestStatus
+                            </span>
+                        </td>
+                        <td>
+                            @Html.ActionLink("View", "AssignmentDetails", "Employee", new { id = assignment.CollectRequestId }, new { @class = "btn btn-view btn-sm" })
+
+                            @if (assignment.RequestStatus == "Assigned" || assignment.RequestStatus == "Collected")
+                            {
+                                <text> </text>
+                                @Html.ActionLink("Update Status", "AssignmentDetails", "Employee", new { id = assignment.CollectRequestId }, new { @class = "btn btn-update btn-sm" })
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div style="margin-top: 20px; text-align: right;">
+        <p class="text-muted">Total: <strong>@Model.Count</strong> assignment(s)</p>
+    </div>
+}
+else
+{
+    <div class="assignments-table">
+        <div class="no-assignments">
+            <div style="font-size: 64px; color: #ddd; margin-bottom: 20px;">📋</div>
+            <h4>No Assignments Yet</h4>
+            <p>You don't have any assignments yet. Check back later!</p>
+        </div>
+    </div>
+}
